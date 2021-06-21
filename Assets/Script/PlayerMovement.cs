@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     public Transform resetPoint;
 
     public bool onReset;
-    public float resetCheckRadius = 1.5f;
+    public float resetCheckRadius = 0.5f;
 
     public float runSpeed = 40f;
     private float horizontalMove = 0;
@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         onReset = Physics2D.OverlapCircle(resetCheck.position, 	
         resetCheckRadius, whatIsResetArea);
 
@@ -36,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
 
         checkJump();
         checkMove();
+        checkRotation();
     }
 
     void checkMove()
@@ -49,6 +51,24 @@ public class PlayerMovement : MonoBehaviour
         bool chrouch = verticalMove < -0.5;
         controller.Move(horizontalMove * Time.fixedDeltaTime * runSpeed, chrouch, jump);
         jump = false;
+    }
+
+    void checkRotation()
+    {
+        float currentRoation = rb.transform.eulerAngles.z;
+        
+        if(currentRoation > 180 && currentRoation < 330) 
+        {
+            Debug.Log("Set min rotation" + currentRoation);
+            rb.angularVelocity = 0f;
+            rb.transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, 330));
+        } 
+        else if(currentRoation > 30 && currentRoation < 180) 
+        {
+            Debug.Log("Set max rotation" + currentRoation);
+            rb.angularVelocity = 0f;
+            rb.transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, 30));
+        }
     }
 
     bool checkReset()
